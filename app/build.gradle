@@ -31,6 +31,7 @@ android {
                 install "yt-dlp"
                 install "git+https://github.com/pytube/pytube"
                 install "python-for-android"
+                install "eyeD3"
             }
         }
     }
