@@ -8,13 +8,18 @@ import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.os.Build
-import androidx.annotation.RequiresApi
+import android.widget.Toast
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
 import androidx.core.app.RemoteInput
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.SetOptions
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
 object NotificationHelper {
-    const val CHANNEL_ID = "01"
+
+    private const val CHANNEL_ID = "01"
     const val CHANNEL_NAME = "Ideas"
     const val NOTIFICATION_ID = 101
     const val KEY_TEXT_REPLY = "key_text_reply"
@@ -36,7 +41,7 @@ object NotificationHelper {
         // For insert link button
         val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY)
             .build()
-        val resultIntent = Intent(context, NotificationReceiver::class.java)
+        val resultIntent = Intent(context, LinkNotificationReceiver::class.java)
         val resultPendingIntent = PendingIntent.getBroadcast(
             context,
             0,
@@ -53,7 +58,6 @@ object NotificationHelper {
             .addRemoteInput(remoteInput)
             .build()
 
-
         // For close button
         val closeIntent = Intent(context, CloseNotificationReceiver::class.java)
         val closePendingIntent = PendingIntent.getBroadcast(
@@ -66,11 +70,29 @@ object NotificationHelper {
                 PendingIntent.FLAG_UPDATE_CURRENT
             }
         )
+
         val closeAction = NotificationCompat.Action.Builder(
             android.R.drawable.ic_notification_clear_all,
             "Close", closePendingIntent)
             .build()
 
+        // For firebase
+        val firebaseIntent = Intent(context, FirebaseReceiver::class.java)
+        val firebasePendingIntent = PendingIntent.getBroadcast(
+            context,
+            0,
+            firebaseIntent,
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+                PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_MUTABLE
+            } else {
+                PendingIntent.FLAG_UPDATE_CURRENT
+            }
+        )
+
+        val firebaseAction = NotificationCompat.Action.Builder(
+            android.R.drawable.ic_notification_clear_all,
+            "Connect", firebasePendingIntent)
+            .build()
 
         val notification = NotificationCompat.Builder(context, CHANNEL_ID).setDefaults(Notification.DEFAULT_ALL)
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -81,6 +103,7 @@ object NotificationHelper {
             .setOnlyAlertOnce(true)
             .setOngoing(true)
             .addAction(replyAction)
+            .addAction(firebaseAction)
             .addAction(closeAction)
             .build()
 

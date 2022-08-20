@@ -2,12 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.youtubeconverter">
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!--Permissions for the Android below 11 (R)-->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
-    <!--Permission for the Android 11 (R) and above-->
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE"/>
+
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- Permissions for the Android below 11 (R) -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" /> <!-- Permission for the Android 11 (R) and above -->
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -20,6 +19,15 @@
         android:theme="@style/Theme.YoutubeConverter"
         tools:targetApi="31">
         <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -28,8 +36,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver android:name=".NotificationReceiver"/>
-        <receiver android:name=".CloseNotificationReceiver"/>
+
+        <receiver android:name=".LinkNotificationReceiver" />
+        <receiver android:name=".CloseNotificationReceiver" />
+        <receiver android:name=".FirebaseReceiver" />
     </application>
 
 </manifest>

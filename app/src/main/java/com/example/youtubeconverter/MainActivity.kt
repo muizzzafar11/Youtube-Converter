@@ -1,6 +1,7 @@
  package com.example.youtubeconverter
 
 import android.Manifest
+import android.content.Context
 import android.provider.Settings
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -15,24 +16,48 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LifecycleObserver
+import com.example.youtubeconverter.ScriptHandler.initPy
+import com.example.youtubeconverter.ScriptHandler.sendDataToScript
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.firestore.ktx.firestore
+import com.google.firebase.ktx.Firebase
 
  class MainActivity : AppCompatActivity(), LifecycleObserver {
 
      private companion object{
-         //PERMISSION request constant, assign any value
          private const val STORAGE_PERMISSION_CODE = 100
-         private const val TAG = "PERMISSION_TAG"
      }
-
      private lateinit var createNotificationButton: Button
+     private lateinit var signOutButton: Button
+     lateinit var mGoogleSignInClient: GoogleSignInClient
+     private var auth = FirebaseAuth.getInstance()
+
 
      override fun onCreate(savedInstanceState: Bundle?) {
          super.onCreate(savedInstanceState)
          setContentView(R.layout.activity_main)
 
          createNotificationButton = findViewById(R.id.btn)
+         signOutButton = findViewById(R.id.btn_logout)
          NotificationHelper.createChannel(this)
 
+         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+             .requestIdToken(getString(R.string.client_id))
+             .requestEmail()
+             .build()
+         mGoogleSignInClient= GoogleSignIn.getClient(this,gso)
+
+         signOutButton.setOnClickListener{
+             mGoogleSignInClient.signOut().addOnCompleteListener {
+                 val intent= Intent(this, LoginActivity::class.java)
+                 startActivity(intent)
+                 finish()
+             }
+         }
 
          createNotificationButton.setOnClickListener {
              if (checkPermission()){
