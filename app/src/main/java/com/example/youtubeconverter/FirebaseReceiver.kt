@@ -13,24 +13,21 @@ class FirebaseReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         firestoreEventListener(context)
+        Toast.makeText(context, "Connected", Toast.LENGTH_SHORT).show()
     }
 
     private fun firestoreEventListener(context: Context) {
         val auth = FirebaseAuth.getInstance()
         val userId = auth.currentUser?.uid
-        Toast.makeText(context, "here - 1", Toast.LENGTH_SHORT).show()
         val docRef = userId?.let { Firebase.firestore.collection("MusicPlayer").document(it) }
         docRef?.addSnapshotListener { snapshot, e ->
             if (e != null) {
                 return@addSnapshotListener
             }
             if (snapshot != null && snapshot.exists()) {
-                Toast.makeText(context, "here - 2", Toast.LENGTH_SHORT).show()
-
                 var url = snapshot.data?.get("currentLink") as String
                 url = url.trim()
                 if(url != "") {
-                    Toast.makeText(context, "here - 3", Toast.LENGTH_SHORT).show()
                     val data = hashMapOf("currentLink" to "")
                     docRef.set(data, SetOptions.merge())
                         .addOnSuccessListener{

@@ -9,7 +9,7 @@ import com.chaquo.python.android.AndroidPlatform
 object ScriptHandler {
 
     fun sendDataToScript(url: String, context: Context) {
-        Toast.makeText(context, "Starting download", Toast.LENGTH_LONG).show()
+        Toast.makeText(context, "Starting download", Toast.LENGTH_SHORT).show()
         Toast.makeText(context, getStringFromScript(url, context), Toast.LENGTH_LONG).show()
         NotificationHelper.showNotification(context)
     }
